@@ -77,12 +77,14 @@ export const createOpenAICompact = ({ name, defaultModel, apiKey, baseURL }: Cre
                 }
 
                 for await (const tc of choice?.delta.tool_calls ?? []) {
-                    calls[tc.index] ??= {
-                        id: tc.id ?? `call_${tc.index}`,
-                        name: tc.function?.name ?? "",
-                        args: tc.function?.arguments ?? ""
-                    };
-                    if (calls[tc.index]?.args === "") {
+                    if (!calls[tc.index]) {
+                        calls[tc.index] = {
+                            id: tc.id ?? `call_${tc.index}`,
+                            name: tc.function?.name ?? "",
+                            args: tc.function?.arguments ?? ""
+                        };
+                    }
+                    else {
                         calls[tc.index]!.args += tc.function?.arguments
                     }
                 }

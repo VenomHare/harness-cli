@@ -22,7 +22,7 @@ export type AssistantMessage = {
     stopReason: StopReason;
 };
 
-export type UserMessage= {
+export type UserMessage = {
     role: "user";
     content: string
 };
@@ -50,4 +50,21 @@ export type Provider = {
     name: string,
     defaultModel: string,
     stream(params: StreamParams): AsyncIterable<StreamEvent>
+}
+
+export type AgentEvents =
+    | { type: "text", delta: string }
+    | { type: "tool_start", toolCall: ToolCallBlock }
+    | { type: "tool_end", toolCall: ToolCallBlock, result: string, isError: boolean }
+    | { type: "turn_end", message: AssistantMessage }
+    | { type: "message", message: Message }
+
+export type AgentOptions = {
+    provider: Provider,
+    system?: string,
+    model?: string,
+    tools: Tool[],
+    messages: Message[],
+    maxTurns?: number,
+    onEvent(event: AgentEvents): Promise<void>
 }
