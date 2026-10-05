@@ -21,7 +21,6 @@ const { values } = parseArgs({
         "provider": { type: "string", default: "openrouter" }
     },
 })
-console.log(values);
 if (!values.prompt) {
     console.error("Prompt toh dal");
     process.exit(1);
@@ -37,7 +36,7 @@ await runAgent({
     tools,
     async onEvent(e) {
         if (e.type === "text") process.stdout.write(e.delta);
-        else if (e.type === "tool_start") console.log(`\n ${e.toolCall.name}`);
+        else if (e.type === "tool_start") console.log(`\n ${e.toolCall.name} ${JSON.stringify(e.toolCall.arguments)}`);
         else if (e.type === "tool_end") {
             const lines = e.result.split("\n").length;
             console.log(`\n ${e.isError ? e.result : lines}`)
@@ -50,68 +49,3 @@ await runAgent({
 
 
 
-
-
-// async function callModel(): Promise<AssistantMessage> {
-//     try {
-//         const stream = await provider.stream({
-//             model: values.model,
-//             messages,
-//             tools
-//         })
-//         for await (const chunk of stream) {
-//             if (chunk.type == "text_delta") {
-//                 process.stdout.write(chunk.delta);
-//             }
-
-//             if (chunk.type == "done") {
-//                 console.log(`\n\n Provider: ${provider.name} | ${values.model ?? provider.defaultModel} Input Tokens: ${chunk.message.usage.input} | Output Tokens: ${chunk.message.usage.output}`);
-//                 return chunk.message;
-//             }
-//         }
-//         throw new Error("Stream Ended without a done chunk");
-//     }
-//     catch (err) {
-//         console.error((err as unknown as any).message)
-//         process.exit(1);
-//     }
-// }
-
-// const firstCall = await callModel();
-// messages.push(firstCall);
-// console.log("### firstCall Stop Reason: " + firstCall.stopReason);
-// if (firstCall.stopReason === "toolUse") {
-//     for (const block of firstCall.content) {
-//         if (block.type !== "toolCall") continue;
-//         console.log(`-> ${block.name}(${JSON.stringify(block.arguments)})`);
-//         let isError = false;
-//         let content = ""
-//         try {
-//             content = await ReadTool.execute(block.arguments);
-//         }
-//         catch (error) {
-//             content = `Failed to read file. Error: ${(error as unknown as any).message}`
-//             isError = true
-//         }
-//         messages.push({ role: "toolResult", toolCallId: block.id, toolName: block.name, content, isError })
-//     }
-//     const secondCall = await callModel();
-//     messages.push(secondCall);
-//     if (secondCall.stopReason === "toolUse") {
-//         for (const block of secondCall.content) {
-//             if (block.type !== "toolCall") continue;
-//             console.log(`-> ${block.name}(${JSON.stringify(block.arguments)})`);
-//             let isError = false;
-//             let content = ""
-//             try {
-//                 content = await ReadTool.execute(block.arguments);
-//             }
-//             catch (error) {
-//                 content = `Failed to read file. Error: ${(error as unknown as any).message}`
-//                 isError = true
-//             }
-//             messages.push({ role: "toolResult", toolCallId: block.id, toolName: block.name, content, isError })
-//         }
-//         messages.push(await callModel())
-//     }
-// }
