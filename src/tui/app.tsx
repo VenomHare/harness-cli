@@ -9,6 +9,9 @@ import { getConfig } from "../lib/config";
 import { getProvider } from "../providers/main";
 import { runAgent } from "../agent/main";
 import { tools } from "../tools";
+import { SYSTEM_PROMPT } from "../agent/system";
+import Markdown from "@jescalan/ink-markdown";
+
 console.clear();
 const config = await getConfig();
 
@@ -42,6 +45,7 @@ export function App({ defaultPrompt, provider: arg_provider, model: arg_model }:
                 model,
                 messages: appendedMessages,
                 tools,
+                system: SYSTEM_PROMPT,
                 async onEvent(event) {
                     if (event.type === "message") {
                         setMessages((m) => [...m, event.message]);
@@ -93,7 +97,7 @@ export function App({ defaultPrompt, provider: arg_provider, model: arg_model }:
                         }
 
                         return <Box flexDirection="column" key={key}>
-                            <Text>{text}</Text>
+                            <Markdown>{text}</Markdown>
                             {
                                 calls.map((c, i) => <>
                                     <Text color={"white"} key={`${c}-${i}`}>{c}</Text>
@@ -101,9 +105,10 @@ export function App({ defaultPrompt, provider: arg_provider, model: arg_model }:
                             }
                         </Box>
                     }
-                    if (m.role === "toolResult") {
-                        return <Text color={m.isError ? "red" : "grey" } key={m.toolCallId || key}></Text>
-                    }
+                    // if (m.role === "toolResult") {
+                        // return <Text color={m.isError ? "red" : "grey" } key={m.toolCallId || key}></Text>
+                    // }
+                    return <></>
                 })
 
 

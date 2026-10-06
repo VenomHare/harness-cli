@@ -16,6 +16,7 @@
     "harness": "./src/index.tsx"
   },
   "dependencies": {
+    "@jescalan/ink-markdown": "^2.0.0",
     "@types/node": "^26.6.4",
     "dotenv": "^18.0.5",
     "ink": "^8.0.0",
