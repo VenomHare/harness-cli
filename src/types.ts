@@ -58,6 +58,7 @@ export type AgentEvents =
     | { type: "tool_end", toolCall: ToolCallBlock, result: string, isError: boolean }
     | { type: "turn_end", message: AssistantMessage }
     | { type: "message", message: Message }
+    | { type: "done", message: AssistantMessage}
 
 export type AgentOptions = {
     provider: Provider,

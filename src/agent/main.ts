@@ -1,16 +1,18 @@
+import { log } from "../lib/config";
 import type { AgentOptions, AssistantMessage, Message } from "../types";
 
 export async function runAgent(options: AgentOptions) {
     const { maxTurns = 20, provider, model, system, tools, messages, onEvent } = options;
-
+    const localMessages = [...messages];
     const push = (message: Message) => {
-        messages.push(message)
+        localMessages.push(message);
         onEvent({ type: "message", message })
     }
 
     for (let turn = 0; turn <= maxTurns; ++turn) {
         let assistantMsg: AssistantMessage | undefined;
-        for await (const chunk of provider.stream({ messages, model, tools, system })) {
+        log(`Before Making next api call messages are ${JSON.stringify(localMessages)}`)
+        for await (const chunk of provider.stream({ messages:localMessages, model, tools, system, maxTokens: 12498 })) {
             if (chunk.type === "text_delta") {
                 onEvent({ type: "text", delta: chunk.delta })
             }
@@ -22,7 +24,11 @@ export async function runAgent(options: AgentOptions) {
         push(assistantMsg);
         onEvent({ type: "turn_end", message: assistantMsg })
 
-        if (assistantMsg.stopReason !== "toolUse") return;
+        if (assistantMsg.stopReason !== "toolUse") {
+            onEvent({ type: "done", message: assistantMsg })
+            return;
+        }
+
 
         for (const call of assistantMsg.content) {
             if (call.type !== "toolCall") continue;
@@ -39,7 +45,9 @@ export async function runAgent(options: AgentOptions) {
                 isError = true
             }
             onEvent({ type: "tool_end", toolCall: call, result, isError });
+            log("Added ToolResult for call " + call.id);
             push({ role: "toolResult", toolCallId: call.id, toolName: call.name, content: result, isError });
+
         }
     }
     throw new Error(`Stopped after ${maxTurns} Turns`);
