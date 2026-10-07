@@ -7,7 +7,6 @@ const CONFIG_FILE = join(homedir(), ".harness-cli", "config.json");
 export type Config = {
   model: string;
   provider: string;
-  chat?: any;
 };
 
 const DEFAULT_CONFIG: Config = {
@@ -33,12 +32,18 @@ export async function getConfig(): Promise<Config> {
   }
 }
 
-export async function saveConfig(config: Partial<Config>) {
+export async function saveConfig(config: Partial<Config>) {  
+  const file = structuredClone(await Bun.file(CONFIG_FILE).json());
+  Object.keys(file).forEach((k) => {
+    const key = k as keyof Config;
+    if (config[key]) {
+      file[k] = config[key]
+    }
+  })
   await mkdir(dirname(CONFIG_FILE), { recursive: true });
-
   await Bun.write(
     CONFIG_FILE,
-    JSON.stringify(config, null, 2)
+    JSON.stringify(file, null, 2)
   );
 }
 

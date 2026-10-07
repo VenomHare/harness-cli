@@ -52,7 +52,7 @@ async function grepInFile(file: string, pattern: RegExp, results: string[]): Pro
     }
     const lines = content.split('\n');
     for (let i = 0; i < lines.length; i++) {
-        if (pattern.test(lines[i])) {
+        if (pattern.test(lines[i] ?? "")) {
             results.push(`${file}:${i + 1}:${lines[i]}`);
             if (results.length >= MAX_MATCHES) return;
         }

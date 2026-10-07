@@ -58,7 +58,7 @@ export type AgentEvents =
     | { type: "tool_end", toolCall: ToolCallBlock, result: string, isError: boolean }
     | { type: "turn_end", message: AssistantMessage }
     | { type: "message", message: Message }
-    | { type: "done", message: AssistantMessage}
+    | { type: "done", message: AssistantMessage }
 
 export type AgentOptions = {
     provider: Provider,
@@ -69,3 +69,6 @@ export type AgentOptions = {
     maxTurns?: number,
     onEvent(event: AgentEvents): Promise<void>
 }
+
+export type Model = { id: string, is_free: boolean }
+export type ModelsList = Record<string, Model[]>

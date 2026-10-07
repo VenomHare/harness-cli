@@ -19,6 +19,12 @@ const providers: Record<string, Provider> = {
         defaultModel: "poolside/laguna-xs-2.1:free",
         baseURL: "https://openrouter.ai/api/v1",
         apiKey: process.env.OPENROUTER_API_KEY!,
+    }),
+    "anthropic": createOpenAICompact({
+        name: "anthropic",
+        defaultModel: "claude-opus-5-5",
+        baseURL: "https://api.anthropic.com/v1/",
+        apiKey: process.env.ANTHROPIC_API_KEY!,
     })
 }
 

@@ -25,7 +25,7 @@ export function CommandsMenu({ updatePrompt, closeMenu }: {
 
     return (<Box backgroundColor={"rgb(65, 65, 65)"} flexDirection="column">
         {
-            COMMANDS.map((c, i) => <Box paddingX={2} backgroundColor={selectedIndex == i ? "rgb(255, 79, 48)" : undefined} key={c + i}>
+            COMMANDS.map((c, i) => <Box paddingX={2} backgroundColor={selectedIndex == i ? "rgb(255, 27, 11)" : undefined} key={c + i}>
                 <Text color={selectedIndex === i ? "whiteBright" : "grey"}>{c}</Text>
             </Box>)
         }

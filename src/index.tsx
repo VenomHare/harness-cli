@@ -20,7 +20,7 @@ const { values } = parseArgs({
     options: {
         "prompt": { type: "string", short: "p" },
         "model": { type: "string", short: "m" },
-        "provider": { type: "string", default: "openrouter" }
+        "provider": { type: "string" }
     },
 })
 
@@ -50,4 +50,4 @@ const { values } = parseArgs({
 //     }
 // })
 
-render(<App defaultPrompt={values.prompt} provider={getProvider(values.provider)} model={values.model} />)
+render(<App defaultPrompt={values.prompt} provider={values.provider} model={values.model} />)
