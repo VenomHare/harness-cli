@@ -23,16 +23,9 @@ harness --provider openai --model gpt-6-luna
 
 ## Configuration
 
-Harness loads a `.env` file from the directory where you run it. Create one with the key for the provider you use:
+On first launch, Harness asks you to choose a provider and enter its API key. The key is masked while entering and saved locally in `~/.harness-cli/secrets.json` with restricted file permissions. Keys are kept per provider, so switching to a provider you have already connected does not ask again.
 
-```dotenv
-OPENAI_API_KEY=your_key_here
-# GROQ_API_KEY=your_key_here
-# OPENROUTER_API_KEY=your_key_here
-# ANTHROPIC_API_KEY=your_key_here
-```
-
-Do not commit this file.
+Harness does not load API keys from `.env` files.
 
 ## Development
 

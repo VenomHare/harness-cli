@@ -1,7 +1,6 @@
 import { Box, Text, useInput } from 'ink'
-import { DEFAULT_MODEL, getModelDetails, SUPPORTED_MODELS, SUPPORTED_PROVIDERS } from '../lib/models'
+import { DEFAULT_MODEL, SUPPORTED_PROVIDERS } from '../lib/models'
 import { useMemo, useState } from 'react';
-import { log } from '../lib/config';
 
 interface Params {
     currentProvider: string,
@@ -25,15 +24,12 @@ const ChangeProviderMenu = ({ currentProvider, onSelect }: Params) => {
         setProvider(providers[selectedIndex] ?? DEFAULT_MODEL.provider);
         const half = Math.ceil(PROVIDERS_DISPLAY_LIMIT / 2);
         if (selectedIndex < half) {
-            log(`1 | 0 ${PROVIDERS_DISPLAY_LIMIT}`)
             return providers.slice(0, PROVIDERS_DISPLAY_LIMIT);
         }
         else if (selectedIndex < providers.length - half - 1) {
-            log(`2 | 0 ${selectedIndex - half + 1} ${Math.min(selectedIndex + half, providers.length - 1)}`);
             return providers.slice(selectedIndex - half + 1, Math.min(selectedIndex + half, providers.length - 1))
         }
         else {
-            log(`3 | ${providers.length - PROVIDERS_DISPLAY_LIMIT}`);
             return providers.slice(Math.max(providers.length - PROVIDERS_DISPLAY_LIMIT, 0));
         }
     }, [selectedIndex])
@@ -46,7 +42,7 @@ const ChangeProviderMenu = ({ currentProvider, onSelect }: Params) => {
             paddingX={1}
         >
             <Text bold> Select the Provider</Text>
-            <Text color={"grey"}>Add Provider API Key in .env as <>{"{{PROVIDER_NAME}}_API_KEY"} variable</></Text>
+            <Text color={"grey"}>Choose a provider to connect it with a local API key.</Text>
             <Box flexDirection='column' flexWrap='nowrap' marginY={1} height={5}>
                 {
                     displayProviders.map((p) => <Box key={p} backgroundColor={provider == p ? "rgb(255, 27, 11)" : "rgb(43, 43, 43)"}>

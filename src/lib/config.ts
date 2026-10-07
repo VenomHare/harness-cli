@@ -32,6 +32,10 @@ export async function getConfig(): Promise<Config> {
   }
 }
 
+export async function configFileExists(): Promise<boolean> {
+  return Bun.file(CONFIG_FILE).exists();
+}
+
 export async function saveConfig(config: Partial<Config>) {  
   const file = structuredClone(await Bun.file(CONFIG_FILE).json());
   Object.keys(file).forEach((k) => {

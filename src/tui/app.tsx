@@ -5,33 +5,44 @@ import { v4 as uuid } from "uuid"
 import { Loader } from "./loader";
 import type { AssistantMessage, ContentBlock, Message, Model, Provider, Usage } from "../types";
 import { COMMANDS, CommandsMenu } from "./commands-menu";
-import { getConfig, log, saveConfig } from "../lib/config";
+import { configFileExists, getConfig, log, saveConfig } from "../lib/config";
+import { loadApiKeys, saveApiKey } from "../lib/secrets";
 import { getProvider } from "../providers/main";
 import { runAgent } from "../agent/main";
 import { tools } from "../tools";
 import { SYSTEM_PROMPT } from "../agent/system";
 import Markdown from "@jescalan/ink-markdown";
 import ChangeModelMenu from "./change-model-menu";
-import { getModelDetails } from "../lib/models";
+import { getModelDetails, SUPPORTED_MODELS } from "../lib/models";
 import ChangeProviderMenu from "./change-provider-menu";
+import ApiKeyInput from "./api-key-input";
 
 console.clear();
+const initialConfigExists = await configFileExists();
 const config = await getConfig();
+const initialApiKeys = await loadApiKeys();
 const cwd = process.cwd().replace(process.env.HOME!, "~");
 
 export function App({ defaultPrompt, provider: arg_provider, model: arg_model }: { defaultPrompt?: string, provider?: string, model?: string }) {
     const [prompt, setPrompt] = useState(defaultPrompt ?? "");
     const [promptKey, setPromptKey] = useState(0);
     const [loading, setLoading] = useState(false);
-    const modelDetails = useMemo(() => getModelDetails(arg_model ?? config.model, arg_provider ?? config.provider), [arg_model, config.model, config.provider, arg_provider]);
+    const selectedProviderName = arg_provider ?? config.provider;
+    const modelDetails = useMemo(() => getModelDetails(arg_model ?? config.model, selectedProviderName), [arg_model, config.model, selectedProviderName]);
 
-    const [provider, setProvider] = useState<Provider>(getProvider(modelDetails.provider));
+    const [apiKeys, setApiKeys] = useState(initialApiKeys);
+    const [provider, setProvider] = useState<Provider>(getProvider(modelDetails.provider, initialApiKeys[modelDetails.provider] ?? ""));
     const [model, setModel] = useState<Model>(modelDetails);
 
     const [usage, setUsage] = useState<Usage>({ input: 0, output: 0 });
 
-    const [providerChangeMenuOpen, setProviderChangeMenuOpen] = useState(false);
+    const [providerChangeMenuOpen, setProviderChangeMenuOpen] = useState(!initialConfigExists);
     const [modelChangeMenuOpen, setModelChangeMenuOpen] = useState(false);
+    const [keyEntryProvider, setKeyEntryProvider] = useState<string | null>(
+        !initialConfigExists && !arg_provider ? null :
+            (initialApiKeys[modelDetails.provider] ? null : modelDetails.provider)
+    );
+    const [keySaveError, setKeySaveError] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [commandsMenu, setCommandsMenu] = useState(false);
 
@@ -146,7 +157,7 @@ export function App({ defaultPrompt, provider: arg_provider, model: arg_model }:
         </Box>
 
         {
-            !modelChangeMenuOpen && !providerChangeMenuOpen && <>
+            !modelChangeMenuOpen && !providerChangeMenuOpen && !keyEntryProvider && <>
                 <Box height={2} ></Box >
                 {loading && <Loader />}
                 {commandsMenu && <CommandsMenu updatePrompt={(p) => {
@@ -209,14 +220,43 @@ export function App({ defaultPrompt, provider: arg_provider, model: arg_model }:
             <ChangeProviderMenu
                 currentProvider={provider.name}
                 onSelect={(p) => {
-                    setProvider(getProvider(p));
-                    saveConfig({ provider: p });
-                    setModelChangeMenuOpen(true);
                     setProviderChangeMenuOpen(false);
+                    setKeySaveError(false);
+                    if (!apiKeys[p]) {
+                        setKeyEntryProvider(p);
+                        return;
+                    }
+                    activateProvider(p, apiKeys[p]);
                 }}
             />
         }
+        {
+            keyEntryProvider &&
+            <ApiKeyInput
+                provider={keyEntryProvider}
+                onSubmit={async (key) => {
+                    try {
+                        await saveApiKey(keyEntryProvider, key);
+                        const nextKeys = { ...apiKeys, [keyEntryProvider]: key.trim() };
+                        setApiKeys(nextKeys);
+                        activateProvider(keyEntryProvider, key.trim());
+                        setKeyEntryProvider(null);
+                    } catch {
+                        setKeySaveError(true);
+                    }
+                }}
+            />
+        }
+        {keyEntryProvider && keySaveError && <Text color="red">Could not save the API key. Check the local config directory and try again.</Text>}
     </>)
+
+    function activateProvider(name: string, apiKey: string) {
+        const firstModel = SUPPORTED_MODELS[name]?.[0];
+        const nextModel = firstModel ?? getModelDetails(config.model, name);
+        setProvider(getProvider(name, apiKey));
+        setModel(nextModel);
+        void saveConfig({ provider: name, model: nextModel.id });
+    }
 }
 
 function Header() {

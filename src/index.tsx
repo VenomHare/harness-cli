@@ -1,12 +1,8 @@
 #!/usr/bin/env bun
 
-import { config } from 'dotenv'
 import { parseArgs } from 'node:util'
 import { render } from 'ink';
 import { App } from './tui/app';
-
-// Load .env from the directory in which the user runs `harness`.
-config({ quiet: true });
 
 const { values } = parseArgs({
     options: {

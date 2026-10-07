@@ -33,14 +33,17 @@ function toOpenAIMessages(messages: Message[]): OpenAI.ChatCompletionMessagePara
 }
 
 export const createOpenAICompact = ({ name, defaultModel, apiKey, baseURL }: CreateOpenAICompactProviderParams): Provider => {
-    const client = new OpenAI({
-        baseURL,
-        apiKey
-    });
     return {
         name,
         defaultModel,
         async *stream({ messages, model, maxTokens, system, tools = [] }) {
+            // Create the SDK client only when a request is made. The app can
+            // safely render its key-entry screen while a provider is still
+            // unconfigured; OpenAI validates credentials in its constructor.
+            const client = new OpenAI({
+                baseURL,
+                apiKey
+            });
             const chat = toOpenAIMessages(messages);
 
             const stream = await client.chat.completions.create({
