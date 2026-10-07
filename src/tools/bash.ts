@@ -1,12 +1,8 @@
 import { spawn } from "node:child_process";
 import type { Tool } from "../types.ts";
-// // import { findBash } from "./shell.ts";
-// import { truncateTail } from "./truncate.ts";
 import { existsSync } from "node:fs";
 import { delimiter, join } from "node:path";
 
-// Which bash to run. On Windows prefer Git Bash by its full path,
-// plain "bash" can be the WSL launcher in System32, which sees a different file system.
 export function findBash(): string {
     if (process.platform !== "win32") return "bash";
     const candidates = [

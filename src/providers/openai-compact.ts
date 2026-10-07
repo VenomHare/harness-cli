@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import type { ContentBlock, CreateOpenAICompactProviderParams, Message, Provider, StopReason, TextBlock, Usage } from "../types";
+import type { ContentBlock, CreateOpenAICompactProviderParams, Message, Provider, StopReason, Usage } from "../types";
 
 function toOpenAIMessages(messages: Message[]): OpenAI.ChatCompletionMessageParam[] {
     return messages.map((m): OpenAI.ChatCompletionMessageParam => {
