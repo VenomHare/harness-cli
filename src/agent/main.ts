@@ -35,10 +35,12 @@ export async function runAgent(options: AgentOptions) {
             onEvent({ type: "tool_start", toolCall: call });
             let result: string;
             let isError: boolean = false;
+            let displayString = "";
             try {
                 const tool = tools.find((t) => t.name === call.name)
                 if (!tool) throw new Error("Unknown Tool Call from LLM. Tool Name: " + call.name);
                 result = await tool.execute(call.arguments);
+                displayString = tool.getDisplayString(result);
             }
             catch (error) {
                 result = `Error ${(error instanceof Error) ? error.message : String(error)}`
@@ -46,7 +48,7 @@ export async function runAgent(options: AgentOptions) {
             }
             onEvent({ type: "tool_end", toolCall: call, result, isError });
             log("Added ToolResult for call " + call.id);
-            push({ role: "toolResult", toolCallId: call.id, toolName: call.name, content: result, isError });
+            push({ role: "toolResult", toolCallId: call.id, toolName: call.name, content: result, isError, displayString });
 
         }
     }

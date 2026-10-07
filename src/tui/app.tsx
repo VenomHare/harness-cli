@@ -21,6 +21,7 @@ const cwd = process.cwd().replace(process.env.HOME!, "~");
 
 export function App({ defaultPrompt, provider: arg_provider, model: arg_model }: { defaultPrompt?: string, provider?: string, model?: string }) {
     const [prompt, setPrompt] = useState(defaultPrompt ?? "");
+    const [promptKey, setPromptKey] = useState(0);
     const [loading, setLoading] = useState(false);
     const modelDetails = useMemo(() => getModelDetails(arg_model ?? config.model, arg_provider ?? config.provider), [arg_model, config.model, config.provider, arg_provider]);
 
@@ -70,7 +71,7 @@ export function App({ defaultPrompt, provider: arg_provider, model: arg_model }:
                     if (event.type === "message") {
                         if (event.message.role === "assistant") {
                             const msg: AssistantMessage = event.message;
-                            log("msg :: " +JSON.stringify(msg.usage));
+                            log("msg :: " + JSON.stringify(msg.usage));
                             setUsage(u => ({
                                 output: u.output + msg.usage.output,
                                 input: u.input + msg.usage.input,
@@ -137,7 +138,7 @@ export function App({ defaultPrompt, provider: arg_provider, model: arg_model }:
                     // if (m.role === "toolResult") {
                     // return <Text color={m.isError ? "red" : "grey" } key={m.toolCallId || key}></Text>
                     // }
-                    return <></>
+                    return <Text color={m.isError ? "red" : "grey"} key={m.toolCallId || key}>{m.displayString}</Text>
                 })
 
 
@@ -148,14 +149,17 @@ export function App({ defaultPrompt, provider: arg_provider, model: arg_model }:
             !modelChangeMenuOpen && !providerChangeMenuOpen && <>
                 <Box height={2} ></Box >
                 {loading && <Loader />}
-                {commandsMenu && <CommandsMenu updatePrompt={setPrompt} closeMenu={() => setCommandsMenu(false)} />}
+                {commandsMenu && <CommandsMenu updatePrompt={(p) => {
+                    setPrompt(p);
+                    setPromptKey(p => p + 1);
+                }} closeMenu={() => setCommandsMenu(false)} />}
                 <Box
                     backgroundColor={"rgb(45, 45, 45)"}
                     padding={1}
                 >
                     <Text>❯ </Text>
                     <TextInput
-                        key={prompt}
+                        key={promptKey}
                         value={prompt}
                         onChange={(e) => {
                             if (e.startsWith("/") && !e.endsWith(" ") && prompt.split(" ").length == 1) {
@@ -165,7 +169,9 @@ export function App({ defaultPrompt, provider: arg_provider, model: arg_model }:
                                 setCommandsMenu(false)
                             }
                             setPrompt(e)
-                        }} />
+                        }}
+                    />
+                    {/* Update promptKey when CommandsMenu unmounts (selection made) */}
                 </Box>
                 <Box justifyContent="space-between">
                     <Box gap={1}>

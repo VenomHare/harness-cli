@@ -17,6 +17,13 @@ export const ReadTool: Tool = {
         },
         required: ["path"]
     },
+    getDisplayString(result) {
+        const lines = result.split("\n");
+        if (lines.length > 3) {
+            return lines.slice(0, 4).join("\n") + "\n....";
+        }
+        return result;
+    },
     async execute(args) {
         return readFile(resolve(process.cwd(), String(args.path)), "utf8");
     }

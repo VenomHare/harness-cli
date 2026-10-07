@@ -78,6 +78,13 @@ export const GrepTool: Tool = {
         },
         required: ["pattern"],
     },
+    getDisplayString(result) {
+        const lines = result.split("\n");
+        if (lines.length > 3) {
+            return lines.slice(0, 4).join("\n") + "\n....";
+        }
+        return result;
+    },
     async execute(args) {
         const patternStr = String(args.pattern);
         let pattern: RegExp;

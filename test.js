@@ -5,4 +5,4 @@ const { stdout, stderr } = await exec(String("ls -R"));
 if (stderr) {
     throw stderr
 }
-console.log(stdout);
+console.log("hello world");

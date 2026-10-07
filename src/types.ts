@@ -11,9 +11,12 @@ export interface ToolSpec {
     description: string,
     parameters: Record<string, unknown>,
 }
-export type Tool = ToolSpec & { execute(args: Record<string, unknown>): Promise<string> }
+export type Tool = ToolSpec & { 
+    execute(args: Record<string, unknown>): Promise<string> 
+    getDisplayString(result: string): string
+}
 
-export type ToolMessageResult = { role: "toolResult", toolCallId: string, toolName: string, content: string, isError: boolean }
+export type ToolMessageResult = { role: "toolResult", toolCallId: string, toolName: string, content: string, isError: boolean, displayString: string }
 
 export type AssistantMessage = {
     role: "assistant";

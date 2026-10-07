@@ -74,6 +74,13 @@ export const BashTool: Tool = {
         },
         required: ["command"],
     },
+    getDisplayString(result) {
+        const lines = result.split("\n");
+        if (lines.length > 3) {
+            return lines.slice(0, 4).join("\n") + "\n....";
+        }
+        return result;
+    },
     async execute(args) {
         const seconds = typeof args.timeout === "number" ? args.timeout : 30;
         return truncateTail(await runBash(String(args.command), seconds * 1000));
