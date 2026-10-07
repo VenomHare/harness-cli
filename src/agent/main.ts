@@ -2,7 +2,7 @@ import { log } from "../lib/config";
 import type { AgentOptions, AssistantMessage, Message } from "../types";
 
 export async function runAgent(options: AgentOptions) {
-    const { maxTurns = 20, provider, model, system, tools, messages, onEvent } = options;
+    const { maxTurns = 20, provider, model, system, tools, messages, onEvent, onExit } = options;
     const localMessages = [...messages];
     const push = (message: Message) => {
         localMessages.push(message);
@@ -12,7 +12,7 @@ export async function runAgent(options: AgentOptions) {
     for (let turn = 0; turn <= maxTurns; ++turn) {
         let assistantMsg: AssistantMessage | undefined;
         log(`Before Making next api call messages are ${JSON.stringify(localMessages)}`)
-        for await (const chunk of provider.stream({ messages:localMessages, model, tools, system, maxTokens: 12498 })) {
+        for await (const chunk of provider.stream({ messages:localMessages, model, tools, system, maxTokens: 12498, onExit })) {
             if (chunk.type === "text_delta") {
                 onEvent({ type: "text", delta: chunk.delta })
             }

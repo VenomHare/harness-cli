@@ -78,6 +78,9 @@ export function App({ defaultPrompt, provider: arg_provider, model: arg_model }:
                 messages: appendedMessages,
                 tools,
                 system: SYSTEM_PROMPT,
+                onExit: () => {
+                    console.log("Process exit detected, aborting LLM request");
+                },
                 async onEvent(event) {
                     if (event.type === "message") {
                         if (event.message.role === "assistant") {

@@ -47,7 +47,8 @@ export type StreamParams = {
     model?: string,
     maxTokens?: number,
     system?: string;
-    tools?: Tool[]
+    tools?: Tool[],
+    onExit?: () => void
 }
 export type Provider = {
     name: string,
@@ -70,7 +71,8 @@ export type AgentOptions = {
     tools: Tool[],
     messages: Message[],
     maxTurns?: number,
-    onEvent(event: AgentEvents): Promise<void>
+    onEvent(event: AgentEvents): Promise<void>,
+    onExit?: () => void
 }
 
 export type Model = { id: string, is_free: boolean }
