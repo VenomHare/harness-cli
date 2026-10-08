@@ -27,10 +27,8 @@ curl -fsSL https://bun.sh/install | bash
 Then clone and run:
 
 ```bash
-git clone https://github.com/VenomHare/harness-cli.git
-cd harness-cli
-bun install
-bun run dev
+bun add -g @venomhare/harness-cli
+harness
 ```
 
 ## Configuration
@@ -50,7 +48,9 @@ chmod 600 ~/.harness-cli/secrets.json
   xattr -d com.apple.quarantine harness-darwin-arm64
   ```
   (use the matching `darwin-x64` binary for Intel Macs)
-- **Windows**: No extra step needed for `bun add -g` installs. For the direct `.exe` download, run it from a directory where you have write permission or select **Yes** if SmartScreen prompts you.
+- **Windows**: 
+  - **Important**: Install Bun using the official installer (`powershell -c "irm bun.sh/install.ps1|iex"`), **not** via npm (`npm install -g bun`). The npm-installed version is a PowerShell script and will not work with npm-generated CLI wrappers.
+  - For the direct `.exe` download, run it from a directory where you have write permission or select **Yes** if SmartScreen prompts you.
 
 ### Building from source
 
