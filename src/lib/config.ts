@@ -36,7 +36,7 @@ export async function configFileExists(): Promise<boolean> {
   return Bun.file(CONFIG_FILE).exists();
 }
 
-export async function saveConfig(config: Partial<Config>) {  
+export async function saveConfig(config: Partial<Config>) {
   const file = structuredClone(await Bun.file(CONFIG_FILE).json());
   Object.keys(file).forEach((k) => {
     const key = k as keyof Config;
@@ -53,8 +53,9 @@ export async function saveConfig(config: Partial<Config>) {
 
 
 export async function log(log: string) {
-    const file = Bun.file("./logs.txt");
-    let d = await file.text();
-    d += `\n[${new Date().toISOString()}]: ${log}`
-    await file.write(d);
+  return;
+  const file = Bun.file("./logs.txt");
+  let d = await file.text();
+  d += `\n[${new Date().toISOString()}]: ${log}`
+  await file.write(d);
 }
