@@ -1,6 +1,6 @@
 {
   "name": "@venomhare/harness-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "An interactive terminal AI agent built with Ink.",
   "type": "module",
   "packageManager": "bun@1.4.0",
@@ -37,7 +37,7 @@
   "scripts": {
     "dev": "bun src/index.tsx",
     "typecheck": "tsc --noEmit",
-    "build": "bun build src/index.tsx --bundle --target=bun --format=esm --outfile dist/index.js",
+    "build": "bun build src/index.tsx --bundle --target=bun --format=esm --minify --outfile dist/index.js",
     "verify": "bun run typecheck && bun run build",
     "prepack": "bun run verify",
     "build:binary": "bun build src/index.tsx --compile --minify --outfile dist/harness",

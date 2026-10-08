@@ -79,6 +79,7 @@ export function App({ defaultPrompt, provider: arg_provider, model: arg_model }:
                 tools,
                 system: SYSTEM_PROMPT,
                 onExit: () => {
+                    log(`Process exit detected, aborting LLM request`);
                     console.log("Process exit detected, aborting LLM request");
                 },
                 async onEvent(event) {

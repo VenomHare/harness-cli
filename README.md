@@ -1,30 +1,37 @@
 # Harness CLI
 
-Harness is an interactive terminal AI agent built with Ink.
+An interactive terminal AI agent built with [Ink](https://github.com/vadimdemedes/ink).
 
-## Installation
+## How to Use
 
-Option 1: Bun package manager
+### 1. Direct Binary Install from [Release Page](https://github.com/VenomHare/harness-cli/releases) (Easiest way)
+
+Download the binary for your platform from the [Release Page](https://github.com/VenomHare/harness-cli/releases), then in your terminal:
 
 ```bash
-bun add -g @venomhare/harness-cli
+cd downloaded-folder && ./harness-linux-x64
 ```
 
-Option 2: GitHub releases (direct download)
+Replace `harness-linux-x64` with the downloaded binary name (e.g. `harness-darwin-arm64`, `harness-windows-x64.exe`).
 
-1. Download the prebuilt binary for your platform from the [GitHub releases page](https://github.com/VenomHare/harness-cli/releases):
-   - `harness-linux-x64` — Linux x64
-   - `harness-darwin-arm64` — macOS Apple Silicon
-   - `harness-darwin-x64` — macOS Intel
-   - `harness-windows-x64.exe` — Windows x64
-2. Make it executable (Linux/macOS):
-   ```bash
-   chmod +x harness-linux-x64
-   ```
-3. Move it to a directory on your `PATH`, e.g.:
-   ```bash
-   sudo mv harness-linux-x64 /usr/local/bin/harness
-   ```
+No dependencies required.
+
+### 2. Install using Bun
+
+Bun is required for this method. Install it first if you don't have it:
+
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
+
+Then clone and run:
+
+```bash
+git clone https://github.com/VenomHare/harness-cli.git
+cd harness-cli
+bun install
+bun run dev
+```
 
 ## Configuration
 
@@ -33,19 +40,6 @@ The CLI stores per-provider API keys locally in `~/.harness-cli/secrets.json` (c
 ```bash
 echo '{ "openai": "sk-..." }' > ~/.harness-cli/secrets.json
 chmod 600 ~/.harness-cli/secrets.json
-```
-
-## Usage
-
-```bash
-# Start interactive session
-harness
-
-# Run with an initial prompt
-harness -p "Fix the failing test in src/foo.ts"
-
-# Select a provider / model
-harness --provider openai --model gpt-4o
 ```
 
 ### OS-specific notes
@@ -67,3 +61,4 @@ bun install
 bun run build:binary:all   # or build:binary for current platform
 ```
 
+### [MIT License](./LICENSE)
